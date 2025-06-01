@@ -28,6 +28,10 @@ export class MyDexie extends Dexie {
     });
   }
 
+  async getChat(chatId: string): Promise<Chat | undefined> {
+    return this.chats.where("id").equals(chatId).first();
+  }
+
   async createNewChat(title: string = "Chat Baru"): Promise<string> {
     const newChatId = crypto.randomUUID();
     const newChat: Chat = {

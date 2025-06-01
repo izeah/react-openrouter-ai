@@ -8,18 +8,16 @@ import {
   PanelLeftClose,
 } from "lucide-react";
 // Chat interface is defined in App.tsx and passed as prop
-import { type Chat } from "../db/dexie";
+import { db, type Chat } from "../db/dexie";
 import { formatDistanceToNowStrict } from "date-fns";
 import { id as IndonesianLocale } from "date-fns/locale";
+import { Link, useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
   chats: Chat[]; // Chat type comes from App.tsx's db/dexie import
-  currentChatId: string | null;
-  onSelectChat: (chatId: string) => void;
-  onCreateNewChat: () => void;
-  onDeleteChat: (chatId: string) => void;
+  currentRouteChatId: string | null;
 }
 
 interface GroupedChats {
@@ -66,11 +64,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   toggleSidebar,
   chats,
-  currentChatId,
-  onSelectChat,
-  onCreateNewChat,
-  onDeleteChat,
+  currentRouteChatId,
 }) => {
+  const navigate = useNavigate();
   const groupedChats = groupChatsByTime(chats);
   const [expandedGroups, setExpandedGroups] = React.useState<
     Record<string, boolean>
@@ -89,15 +85,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
   const [chatToDelete, setChatToDelete] = React.useState<Chat | null>(null);
 
+  const handleDeleteChat = async (chatId: string) => {
+    await db.deleteChat(chatId);
+  };
+
   const handleDeleteClick = (chat: Chat, e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setChatToDelete(chat);
     setShowDeleteConfirm(true);
   };
 
   const confirmDelete = () => {
     if (chatToDelete) {
-      onDeleteChat(chatToDelete.id);
+      handleDeleteChat(chatToDelete.id);
+      if (currentRouteChatId === chatToDelete.id) {
+        navigate("/", { replace: true }); // Navigasi ke halaman utama jika chat yang dihapus adalah yang sedang aktif
+      }
     }
     setShowDeleteConfirm(false);
     setChatToDelete(null);
@@ -113,7 +117,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div
         className={`
           ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-          fixed inset-y-0 left-0 z-30 w-64 sm:w-72 bg-brand-medium text-brand-darker
+          fixed inset-y-0 left-0 z-40 w-64 sm:w-72 bg-brand-medium text-brand-darker
           transform transition-transform duration-300 ease-in-out 
           flex flex-col print:hidden
           shadow-lg border-r border-brand-accent
@@ -137,13 +141,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </button>
         </div>
-        <button
-          onClick={onCreateNewChat}
+        <Link
+          to="/"
           className="flex items-center w-auto text-left p-3 m-3 bg-brand-dark hover:bg-brand-darker text-white rounded-lg transition-colors duration-150"
         >
           <PlusCircle size={20} className="mr-2" />
           Buat Chat Baru
-        </button>
+        </Link>
         <nav className="flex-1 overflow-y-auto p-2 space-y-1">
           {Object.keys(groupedChats).length === 0 && (
             <p className="p-4 text-sm text-center text-brand-dark">
@@ -176,20 +180,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 // max-h-[1000px] adalah nilai yang cukup besar, sesuaikan jika perlu
               >
                 {groupChats.map((chat) => (
-                  <li key={chat.id}>
-                    <div
+                  <li key={chat.id} className="flex flex-col">
+                    <Link
+                      to={`/c/${chat.id}`}
                       className={`
-                          group flex items-center justify-between p-2.5 rounded-md cursor-pointer
+                          group flex items-center justify-between p-1 rounded-md cursor-pointer
                           transition-colors duration-150
                           ${
-                            currentChatId === chat.id
+                            currentRouteChatId === chat.id
                               ? "bg-brand-accent text-white"
-                              : "hover:bg-brand-light"
+                              : "hover:bg-brand-light text-brand-darker"
                           }
                         `}
-                      onClick={() => onSelectChat(chat.id)}
                     >
-                      <div className="flex items-center overflow-hidden">
+                      <div className="flex items-center overflow-hidden flex-1 min-w-0">
                         <MessageSquare
                           size={18}
                           className="mr-2 flex-shrink-0"
@@ -201,7 +205,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         className={`
                             ml-2 p-1 rounded opacity-0 group-hover:opacity-100
                             ${
-                              currentChatId === chat.id
+                              currentRouteChatId === chat.id
                                 ? "text-white hover:bg-red-400"
                                 : "text-red-500 hover:bg-red-100"
                             }
@@ -211,7 +215,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       >
                         <Trash2 size={16} />
                       </button>
-                    </div>
+                    </Link>
                     <p className="text-xs text-gray-500 ml-9">
                       {formatDistanceToNowStrict(new Date(chat.createdAt), {
                         addSuffix: true,

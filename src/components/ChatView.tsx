@@ -7,7 +7,6 @@ import { useLiveQuery } from "dexie-react-hooks";
 interface ChatViewProps {
   chatId: string;
   chatToAutoProcess: string | null;
-  setChatToAutoProcess: (id: string | null) => void;
   apiKey: string;
   isSidebarOpen: boolean;
 }
@@ -17,7 +16,6 @@ const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 export const ChatView: React.FC<ChatViewProps> = ({
   chatId,
   chatToAutoProcess,
-  setChatToAutoProcess,
   apiKey,
   isSidebarOpen,
 }) => {
@@ -91,7 +89,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
       try {
         abortControllerRef.current = new AbortController();
-
         const response = await fetch(OPENROUTER_API_URL, {
           method: "POST",
           headers: {
@@ -274,7 +271,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
           { role: "user" as const, content: firstUserMessage.content },
         ];
         _initiateApiStream(historyForApi);
-        setChatToAutoProcess(null); // Hapus tanda setelah diproses
       }
     }
   }, [
@@ -283,7 +279,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
     messages,
     isSending,
     isThinking,
-    setChatToAutoProcess,
     _initiateApiStream,
     apiKey,
   ]); // apiKey ditambahkan karena _initiateApiStream bergantung padanya
@@ -303,7 +298,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
   return (
     <div className="flex-1 flex flex-col bg-brand-light overflow-hidden">
-      <div className="flex-1 overflow-y-auto pt-4 sm:pt-6 pb-16 md:pb-16 space-y-4 px-12 sm:px-[25%] print:overflow-visible">
+      <div className="flex-1 overflow-y-auto pt-4 sm:pt-6 pb-16 md:pb-16 space-y-4 px-12 sm:px-12 lg:px-[10%] print:overflow-visible">
         {messages?.map((msg) => (
           <ChatMessage key={msg.id} message={msg} />
         ))}
@@ -361,7 +356,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
         className={`fixed bottom-8 right-0 max-sm:px-4 sm:right-4 print:hidden z-10 
                   transition-all duration-300 ease-in-out 
                   ${
-                    isSidebarOpen ? "md:left-56 lg:left-[288px]" : "md:left-0"
+                    isSidebarOpen
+                      ? "md:left-[270px] lg:left-[288px]"
+                      : "md:left-0"
                   } left-0`}
         // Default (mobile): left-0 right-0 (full width).
         // Desktop (md+):
@@ -369,7 +366,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         // - Jika sidebar tertutup: md:left-0 hingga right-0 (full width area konten).
       >
         {/* Wrapper untuk centering (mx-auto) dan lebar 50% (md:w-1/2) di dalam kontainer di atas */}
-        <div className="w-full md:w-1/2 mx-auto bg-brand-light">
+        <div className="w-[90%] mx-auto lg:w-[80%] bg-brand-light">
           <div className="flex items-end space-x-2 sm:space-x-3">
             <textarea
               id="userInputArea"
