@@ -26,10 +26,14 @@ const AppLayout: React.FC = () => {
   );
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState<boolean>(!apiKey);
 
+  const [showToast, setShowToast] = useState(false);
+
   const handleSetApiKey = () => {
     if (apiKey.trim() !== "") {
       localStorage.setItem("openrouter_api_key", apiKey);
       setIsApiKeyModalOpen(false);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
     } else {
       // Idealnya ini perlu UI kustom jika aplikasi production
       alert("API Key tidak boleh kosong.");
@@ -57,44 +61,6 @@ const AppLayout: React.FC = () => {
     }
   }, []);
 
-  if (isApiKeyModalOpen) {
-    return (
-      <div className="fixed inset-0 bg-brand-dark bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div className="bg-brand-light p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-md">
-          <h2 className="text-2xl font-semibold text-brand-darker mb-4">
-            Masukkan API Key OpenRouter
-          </h2>
-          <p className="text-sm text-brand-dark mb-4">
-            API Key Anda akan disimpan di Local Storage peramban Anda. Anda bisa
-            mendapatkan API Key dari{" "}
-            <a
-              href="https://openrouter.ai/keys"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              OpenRouter Keys
-            </a>
-            .
-          </p>
-          <input
-            type="password"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder="sk-or-v1-..."
-            className="w-full p-3 border border-brand-accent rounded-md mb-6 focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none"
-          />
-          <button
-            onClick={handleSetApiKey}
-            className="w-full bg-brand-dark hover:bg-brand-darker text-white font-semibold py-3 px-4 rounded-md transition duration-150"
-          >
-            Simpan API Key
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // Dapatkan chatId saat ini dari URL untuk menyorot item sidebar yang aktif
   useEffect(() => {
     const pathParts = location.pathname.split("/");
@@ -107,6 +73,7 @@ const AppLayout: React.FC = () => {
       <Sidebar
         isOpen={isSidebarOpen}
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        toggleApiKeyModal={() => setIsApiKeyModalOpen(!isApiKeyModalOpen)}
         chats={chats || []}
         currentRouteChatId={currentRouteChatId}
       />
@@ -119,6 +86,27 @@ const AppLayout: React.FC = () => {
                   }`}
         onClick={handleCloseSidebar}
       >
+        {showToast && (
+          <div
+            className="absolute top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
+            style={{ minWidth: 220, zIndex: 9999 }}
+          >
+            <svg
+              className="w-5 h-5 text-white"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span className="font-semibold">API Key berhasil diganti!</span>
+          </div>
+        )}
         <header className="p-3 sm:p-4 shadow-md flex items-center print:hidden z-30">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -157,6 +145,42 @@ const AppLayout: React.FC = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
+
+      {isApiKeyModalOpen && (
+        <div className="fixed inset-0 bg-brand-dark bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-brand-light p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-md">
+            <h2 className="text-2xl font-semibold text-brand-darker mb-4">
+              Masukkan API Key OpenRouter
+            </h2>
+            <p className="text-sm text-brand-dark mb-4">
+              API Key Anda akan disimpan di Local Storage peramban Anda. Anda
+              bisa mendapatkan API Key dari{" "}
+              <a
+                href="https://openrouter.ai/keys"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                OpenRouter Keys
+              </a>
+              .
+            </p>
+            <input
+              type="password"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder="sk-or-v1-..."
+              className="w-full p-3 border border-brand-accent rounded-md mb-6 focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none"
+            />
+            <button
+              onClick={handleSetApiKey}
+              className="w-full bg-brand-dark hover:bg-brand-darker text-white font-semibold py-3 px-4 rounded-md transition duration-150"
+            >
+              Simpan API Key
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

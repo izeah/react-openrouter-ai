@@ -326,23 +326,33 @@ export const ChatView: React.FC<ChatViewProps> = ({
       </div>
 
       {error && (
-        <div className="p-3 bg-red-100 text-red-700 border-t border-red-200 flex items-center justify-between">
-          <div className="flex items-center">
-            <AlertTriangle size={20} className="mr-2 flex-shrink-0" />
-            <span className="text-sm">{error}</span>
+        <div
+          className={`fixed right-0 bottom-24 flex items-center justify-center z-10 transition-all duration-300 ease-in-out ${
+            isSidebarOpen ? "md:left-[270px] lg:left-[288px]" : "md:left-0"
+          } left-0`}
+        >
+          <div className="w-[75%] mx-auto lg:w-[25%] bg-red-100 text-red-700 border-t border-red-200 flex items-center justify-between px-4 py-2 rounded shadow">
+            <div className="flex items-center">
+              <AlertTriangle size={20} className="mr-2 flex-shrink-0" />
+              <span className="text-sm">{error}</span>
+            </div>
+            <button
+              onClick={() => setError(null)}
+              className="text-red-700 hover:text-red-900 p-1 ml-4"
+              aria-label="Tutup error"
+            >
+              &times;
+            </button>
           </div>
-          <button
-            onClick={() => setError(null)}
-            className="text-red-700 hover:text-red-900 p-1"
-            aria-label="Tutup error"
-          >
-            &times;
-          </button>
         </div>
       )}
 
       {isSending && abortControllerRef.current && (
-        <div className="fixed right-0 left-0 bottom-24 flex items-center justify-center">
+        <div
+          className={`fixed right-0 left-0 bottom-24 flex items-center justify-center z-10 transition-all duration-300 ease-in-out ${
+            isSidebarOpen ? "md:left-[270px] lg:left-[288px]" : "md:left-0"
+          } left-0`}
+        >
           <button
             onClick={handleStopStreaming}
             className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md flex items-center transition duration-150"

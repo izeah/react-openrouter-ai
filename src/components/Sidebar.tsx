@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronRight,
   PanelLeftClose,
+  RectangleEllipsis,
 } from "lucide-react";
 // Chat interface is defined in App.tsx and passed as prop
 import { db, type Chat } from "../db/dexie";
@@ -16,6 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
+  toggleApiKeyModal: () => void;
   chats: Chat[]; // Chat type comes from App.tsx's db/dexie import
   currentRouteChatId: string | null;
 }
@@ -63,6 +65,7 @@ const groupChatsByTime = (chats: Chat[]): GroupedChats => {
 export const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   toggleSidebar,
+  toggleApiKeyModal,
   chats,
   currentRouteChatId,
 }) => {
@@ -228,8 +231,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           ))}
         </nav>
-        <div className="p-4 border-t border-brand-accent text-xs text-center text-brand-dark">
-          Bertenaga AI
+        <div className="p-4 border-t border-brand-accent text-xs text-center text-brand-dark flex flex-col items-center gap-2">
+          <div>Bertenaga AI</div>
+          <button
+            onClick={toggleApiKeyModal}
+            className="flex items-center gap-1 px-3 py-1 mt-1 text-xs font-medium bg-brand-dark text-white rounded hover:bg-brand-darker transition-colors"
+            aria-label="Ganti API Key"
+          >
+            <RectangleEllipsis size={16} />
+            Ganti API Key
+          </button>
         </div>
       </div>
 
