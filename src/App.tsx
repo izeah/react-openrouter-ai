@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Sidebar } from "./components/Sidebar";
-import { MessageSquarePlus, PanelLeftOpen } from "lucide-react";
+import { Eye, EyeOff, MessageSquarePlus, PanelLeftOpen } from "lucide-react";
 import { db } from "./db/dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import {
@@ -21,6 +21,7 @@ const AppLayout: React.FC = () => {
     null
   );
 
+  const [isShowApiKey, setIsShowApiKey] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>(
     localStorage.getItem("openrouter_api_key") || ""
   );
@@ -164,13 +165,16 @@ const AppLayout: React.FC = () => {
       </div>
 
       {isApiKeyModalOpen && (
-        <div className="fixed inset-0 bg-brand-dark bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div
+          className="fixed inset-0 bg-brand-dark bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={() => setIsApiKeyModalOpen(false)}
+        >
           <div className="bg-brand-light p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-md">
             <h2 className="text-2xl font-semibold text-brand-darker mb-4">
               Masukkan API Key OpenRouter
             </h2>
             <p className="text-sm text-brand-dark mb-4">
-              API Key Anda akan disimpan di Local Storage peramban Anda. Anda
+              API Key Anda akan disimpan di Local Storage browser Anda. Anda
               bisa mendapatkan API Key dari{" "}
               <a
                 href="https://openrouter.ai/keys"
@@ -182,13 +186,24 @@ const AppLayout: React.FC = () => {
               </a>
               .
             </p>
-            <input
-              type="password"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="sk-or-v1-..."
-              className="w-full p-3 border border-brand-accent rounded-md mb-6 focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none"
-            />
+            <div className="flex flex-row gap-2 items-center justify-center">
+              <input
+                type={isShowApiKey ? "text" : "password"}
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="sk-or-v1-..."
+                className="w-full p-3 border border-brand-accent rounded-md mb-6 focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setIsShowApiKey(!isShowApiKey)}
+                className="p-3 mb-6 text-brand-dark hover:text-brand-darker focus:outline-none"
+                tabIndex={-1}
+                aria-label="Show or hide API key"
+              >
+                {isShowApiKey ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             <button
               onClick={handleSetApiKey}
               className="w-full bg-brand-dark hover:bg-brand-darker text-white font-semibold py-3 px-4 rounded-md transition duration-150"
