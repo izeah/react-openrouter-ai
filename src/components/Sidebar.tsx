@@ -4,7 +4,6 @@ import {
   MessageSquare,
   Trash2,
   ChevronDown,
-  ChevronRight,
   PanelLeftClose,
   RectangleEllipsis,
 } from "lucide-react";

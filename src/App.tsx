@@ -56,9 +56,24 @@ const AppLayout: React.FC = () => {
   );
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
-      setIsSidebarOpen(false);
-    }
+    const handleSidebar = () => {
+      if (typeof window !== "undefined") {
+        if (window.innerWidth < 768) {
+          setIsSidebarOpen(false);
+        } else {
+          setIsSidebarOpen(true);
+        }
+      }
+    };
+
+    // Tambahkan event listener untuk resize
+    window.addEventListener("resize", handleSidebar);
+    // Panggil fungsi untuk set awal sidebar
+    handleSidebar();
+    // Bersihkan event listener saat komponen unmount
+    return () => {
+      window.removeEventListener("resize", handleSidebar);
+    };
   }, []);
 
   // Dapatkan chatId saat ini dari URL untuk menyorot item sidebar yang aktif
