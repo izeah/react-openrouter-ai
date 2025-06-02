@@ -86,27 +86,29 @@ const AppLayout: React.FC = () => {
                   }`}
         onClick={handleCloseSidebar}
       >
-        {showToast && (
-          <div
-            className="absolute top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
-            style={{ minWidth: 220, zIndex: 9999 }}
+        <div
+          className={`absolute top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transform transition-all duration-500 ease-in-out ${
+            showToast
+              ? "translate-y-0 opacity-100 scale-100"
+              : "-translate-y-4 opacity-0 scale-95"
+          }`}
+          style={{ minWidth: 220, zIndex: 9999 }}
+        >
+          <svg
+            className="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
           >
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            <span className="font-semibold">API Key berhasil diganti!</span>
-          </div>
-        )}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+          <span className="font-semibold">API Key berhasil diganti!</span>
+        </div>
         <header className="p-3 sm:p-4 shadow-md flex items-center print:hidden z-30">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
