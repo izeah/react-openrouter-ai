@@ -164,11 +164,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className="flex items-center justify-between w-auto p-2 text-sm font-semibold text-brand-dark hover:bg-brand-light rounded-md"
               >
                 {groupName} ({groupChats.length})
-                {expandedGroups[groupName] ? (
-                  <ChevronDown size={18} />
-                ) : (
-                  <ChevronRight size={18} />
-                )}
+                <ChevronDown
+                  size={18}
+                  className={`transform transition-all duration-150 ease-in-out ${
+                    expandedGroups[groupName] ? "rotate-0" : "-rotate-90"
+                  }`}
+                />
               </button>
               {/* Mengubah cara ul dirender untuk transisi */}
               <ul
