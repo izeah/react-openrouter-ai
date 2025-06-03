@@ -169,7 +169,10 @@ const AppLayout: React.FC = () => {
           className="fixed inset-0 bg-brand-dark bg-opacity-75 flex items-center justify-center z-50 p-4"
           onClick={() => setIsApiKeyModalOpen(false)}
         >
-          <div className="bg-brand-light p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-md">
+          <div
+            className="bg-brand-light p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 className="text-2xl font-semibold text-brand-darker mb-4">
               Masukkan API Key OpenRouter
             </h2>
