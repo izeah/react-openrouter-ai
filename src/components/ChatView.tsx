@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Send, Loader2, AlertTriangle, Square } from "lucide-react";
+import { Send, Loader2, AlertTriangle, Square, ArrowDown } from "lucide-react";
 import { ChatMessage } from "./ChatMessage";
 import { db, type Message } from "../db/dexie";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -25,6 +25,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const messages = useLiveQuery(
     () => db.messages.where("chatId").equals(chatId).sortBy("timestamp"),
@@ -283,6 +285,34 @@ export const ChatView: React.FC<ChatViewProps> = ({
     apiKey,
   ]); // apiKey ditambahkan karena _initiateApiStream bergantung padanya
 
+  // Scroll event handler
+  useEffect(() => {
+    const container = chatContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      // Show button if not at the bottom (allow 40px leeway)
+      const atBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight <
+        40;
+      setShowScrollToBottom(!atBottom);
+    };
+
+    container.addEventListener("scroll", handleScroll);
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [messages, isSidebarOpen]);
+
+  // Scroll to bottom function
+  const handleButtonScrollToBottom = () => {
+    chatContainerRef.current?.scrollTo({
+      top: chatContainerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
   const handleStopStreaming = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -298,7 +328,10 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
   return (
     <div className="flex-1 flex flex-col bg-brand-light overflow-hidden">
-      <div className="flex-1 overflow-y-auto pt-4 sm:pt-6 pb-16 md:pb-16 space-y-4 px-12 sm:px-12 lg:px-[10%] print:overflow-visible">
+      <div
+        ref={chatContainerRef}
+        className="flex-1 overflow-y-auto pt-4 sm:pt-6 pb-16 md:pb-16 space-y-4 px-12 sm:px-12 lg:px-[10%] print:overflow-visible"
+      >
         {messages?.map((msg) => (
           <ChatMessage key={msg.id} message={msg} />
         ))}
@@ -323,6 +356,26 @@ export const ChatView: React.FC<ChatViewProps> = ({
             </div>
           )}
         <div ref={messagesEndRef} />
+      </div>
+
+      {/* Scroll to Latest Button */}
+      <div
+        className={`fixed z-20 transition-all duration-300 ease-in-out right-0 bottom-[88px]
+            ${isSidebarOpen ? "md:left-[270px] lg:left-[288px]" : "md:left-0"}
+            left-0 flex items-center justify-center pointer-events-none
+          `}
+      >
+        <button
+          onClick={handleButtonScrollToBottom}
+          className={`${
+            showScrollToBottom ? "pointer-events-auto" : "pointer-events-none"
+          } border-2 border-brand-darker bg-brand-light rounded-full shadow-lg p-1 flex items-center transition duration-150 ${
+            showScrollToBottom ? "opacity-100" : "opacity-0"
+          }`}
+          aria-label="Scroll ke chat terbaru"
+        >
+          <ArrowDown size={24} />
+        </button>
       </div>
 
       {error && (
