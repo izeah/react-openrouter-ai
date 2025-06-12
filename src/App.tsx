@@ -17,7 +17,7 @@ import ChatPage from "./pages/ChatPage";
 const MODEL_OPTIONS = [
   {
     value: "deepseek/deepseek-r1-0528-qwen3-8b:free",
-    label: "DeepSeek Qwen3-8B (Gratis)",
+    label: "DeepSeek R1 Qwen3-8B",
   },
   {
     value: "openai/gpt-3.5-turbo",
@@ -29,7 +29,7 @@ const MODEL_OPTIONS = [
   },
   {
     value: "qwen/qwen3-235b-a22b:free",
-    label: "Qwen3 235B (Gratis)",
+    label: "Qwen3 235B",
   },
 ];
 
@@ -226,7 +226,10 @@ const AppLayout: React.FC = () => {
         </header>
         {/* Area konten utama yang dirender berdasarkan rute */}
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/"
+            element={<HomePage setCurrentRouteChatId={setCurrentRouteChatId} />}
+          />
           <Route
             path="/c/:chatId"
             element={<ChatPage apiKey={apiKey} isSidebarOpen={isSidebarOpen} />}

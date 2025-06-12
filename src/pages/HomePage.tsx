@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { db, type Chat, type Message } from "../db/dexie";
 import { useNavigate } from "react-router-dom";
 
-const HomePage: React.FC = () => {
+const HomePage: React.FC<{
+  setCurrentRouteChatId: React.Dispatch<React.SetStateAction<string | null>>;
+}> = ({ setCurrentRouteChatId }) => {
   const navigate = useNavigate(); // Inisialisasi useNavigate untuk navigasi
   const [initialPrompt, setInitialPrompt] = useState(""); // State untuk textarea di layar selamat datang
 
@@ -19,6 +21,7 @@ const HomePage: React.FC = () => {
   const [welcomeGreeting, setWelcomeGreeting] = useState("");
 
   useEffect(() => {
+    setCurrentRouteChatId(null); // Setel chatId saat ini ke null ketika HomePage dimuat
     setWelcomeGreeting(greetings[Math.floor(Math.random() * greetings.length)]);
   }, []);
 
