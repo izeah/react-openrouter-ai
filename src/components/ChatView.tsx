@@ -330,7 +330,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
     <div className="flex-1 flex flex-col bg-brand-light overflow-hidden">
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto pt-4 sm:pt-6 pb-16 md:pb-16 space-y-4 px-12 sm:px-12 lg:px-[10%] print:overflow-visible"
+        className="flex-1 overflow-y-auto pt-4 sm:pt-6 pb-16 md:pb-16 space-y-4 px-3 sm:px-6 md:px-12 lg:px-[10%] print:overflow-visible"
       >
         {messages?.map((msg) => (
           <ChatMessage key={msg.id} message={msg} />
@@ -416,7 +416,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       )}
 
       <div
-        className={`fixed bottom-8 right-0 max-sm:px-4 sm:right-4 print:hidden z-10 
+        className={`fixed bottom-8 right-0 sm:right-4 print:hidden z-10 
                   transition-all duration-300 ease-in-out 
                   ${
                     isSidebarOpen
@@ -429,7 +429,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         // - Jika sidebar tertutup: md:left-0 hingga right-0 (full width area konten).
       >
         {/* Wrapper untuk centering (mx-auto) dan lebar 50% (md:w-1/2) di dalam kontainer di atas */}
-        <div className="w-[90%] mx-auto lg:w-[80%] bg-brand-light">
+        <div className="w-[95%] mx-auto lg:w-[80%] bg-brand-light">
           <div className="flex items-end space-x-2 sm:space-x-3">
             <textarea
               id="userInputArea"
