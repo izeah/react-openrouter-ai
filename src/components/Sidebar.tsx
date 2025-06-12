@@ -159,6 +159,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <Link
           to="/"
           className="flex items-center w-auto text-left p-3 m-3 bg-brand-dark hover:bg-brand-darker text-white rounded-lg transition-colors duration-150"
+          onClick={() => toggleSidebar()}
         >
           <PlusCircle size={20} className="mr-2" />
           Buat Chat Baru
@@ -199,6 +200,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <li key={chat.id} className="flex flex-col">
                     <Link
                       to={`/c/${chat.id}`}
+                      onClick={() => toggleSidebar()}
                       className={`
                           group flex items-center justify-between p-1 rounded-md cursor-pointer
                           transition-colors duration-150

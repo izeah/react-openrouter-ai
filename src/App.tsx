@@ -52,6 +52,13 @@ const AppLayout: React.FC = () => {
   const handleSetApiKey = () => {
     if (apiKey.trim() !== "") {
       localStorage.setItem("openrouter_api_key", apiKey);
+      if (
+        isSidebarOpen &&
+        typeof window !== "undefined" &&
+        window.innerWidth < 768
+      ) {
+        setIsSidebarOpen(false);
+      }
       setIsApiKeyModalOpen(false);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 5000);
@@ -142,12 +149,12 @@ const AppLayout: React.FC = () => {
         onClick={handleCloseSidebar}
       >
         <div
-          className={`absolute top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transform transition-all duration-500 ease-in-out ${
+          className={`absolute max-sm:bottom-24 sm:top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform transition-all duration-500 ease-in-out ${
             showToast
               ? "translate-y-0 opacity-100 scale-100"
               : "-translate-y-4 opacity-0 scale-95"
           }`}
-          style={{ minWidth: 220, zIndex: 9999 }}
+          style={{ minWidth: 240, zIndex: 9999 }}
         >
           <svg
             className="w-5 h-5 text-white"
