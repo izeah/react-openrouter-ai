@@ -104,6 +104,19 @@ const AppLayout: React.FC = () => {
       setCurrentRouteChatId(pathParts[2]);
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (!isApiKeyModalOpen) return;
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsApiKeyModalOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isApiKeyModalOpen]);
+
   return (
     <div className="flex h-screen bg-brand-light font-sans">
       <Sidebar

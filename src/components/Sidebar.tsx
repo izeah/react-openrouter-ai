@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   PlusCircle,
   MessageSquare,
@@ -113,6 +113,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setShowDeleteConfirm(false);
     setChatToDelete(null);
   };
+
+  useEffect(() => {
+    if (!showDeleteConfirm) return;
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowDeleteConfirm(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [showDeleteConfirm]);
 
   return (
     <>
