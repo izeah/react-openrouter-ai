@@ -108,24 +108,45 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                       const filename =
                         match && match[2] ? match[2] : defaultFilename;
 
-                      return !inline ? (
-                        <CodeBlock
-                          language={language}
-                          filename={filename}
-                          isUser={isUser}
-                        >
-                          {String(children).replace(/\n$/, "")}
-                        </CodeBlock>
-                      ) : (
-                        <code
-                          className={`${className || ""} text-xs`}
-                          {...props}
-                        >
-                          {children}
-                        </code>
-                      );
+                      if (!inline) {
+                        // Return fragment to avoid <pre> inside <p>
+                        return (
+                          <>
+                            {
+                              <CodeBlock
+                                language={language}
+                                filename={filename}
+                                isUser={isUser}
+                              >
+                                {String(children).replace(/\n$/, "")}
+                              </CodeBlock>
+                            }
+                          </>
+                        );
+                      } else {
+                        return (
+                          <code
+                            className={`${className || ""} text-xs`}
+                            {...props}
+                          >
+                            {children}
+                          </code>
+                        );
+                      }
                     },
                     pre: ({ children }) => <>{children}</>,
+                    // Tambahkan custom paragraph agar code block tidak dibungkus <p>
+                    p: ({ children }) => {
+                      // Jika child adalah CodeBlock, return fragment
+                      if (
+                        Array.isArray(children) &&
+                        children.length === 1 &&
+                        children[0]?.type?.name === "CodeBlock"
+                      ) {
+                        return <>{children}</>;
+                      }
+                      return <>{children}</>;
+                    },
                   }}
                 >
                   {message.content}
