@@ -46,7 +46,6 @@ interface CodeBlockProps {
 
 export const CodeBlock: React.FC<CodeBlockProps> = ({
   language,
-  filename,
   children,
   isUser,
 }) => {
@@ -61,7 +60,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
             setCopied(true);
             setTimeout(() => setCopied(false), 3000);
           })
-          .catch((err) => {
+          .catch(() => {
             fallbackCopyTextToClipboard(children);
           });
       } catch (error) {
