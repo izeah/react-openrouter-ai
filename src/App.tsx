@@ -14,8 +14,28 @@ import {
 import HomePage from "./pages/HomePage";
 import ChatPage from "./pages/ChatPage";
 
+const MODEL_OPTIONS = [
+  {
+    value: "deepseek/deepseek-r1-0528-qwen3-8b:free",
+    label: "DeepSeek Qwen3-8B (Gratis)",
+  },
+  {
+    value: "openai/gpt-3.5-turbo",
+    label: "OpenAI GPT-3.5 Turbo",
+  },
+  {
+    value: "meta-llama/llama-3-70b-instruct",
+    label: "Llama-3 70B",
+  },
+  {
+    value: "qwen/qwen3-235b-a22b:free",
+    label: "Qwen3 235B (Gratis)",
+  },
+];
+
 const AppLayout: React.FC = () => {
   const location = useLocation();
+  const [selectedModel, setSelectedModel] = useState(MODEL_OPTIONS[0].value);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentRouteChatId, setCurrentRouteChatId] = useState<string | null>(
     null
@@ -125,31 +145,70 @@ const AppLayout: React.FC = () => {
           </svg>
           <span className="font-semibold">API Key berhasil diganti!</span>
         </div>
-        <header className="p-3 sm:p-4 shadow-md flex items-center print:hidden z-30">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className={`${
-              isSidebarOpen ? "invisible" : ""
-            } text-brand-darker hover:text-brand-dark focus:outline-none`}
-            aria-label="Toggle sidebar"
-          >
-            <div className="p-2 transition-colors hover:bg-brand-light rounded-md duration-150">
-              <PanelLeftOpen size={28} />
+        <header className="p-3 sm:p-4 shadow-md flex flex-col sm:flex-row items-center print:hidden z-30">
+          <div className="flex items-center justify-between sm:justify-normal w-full sm:w-auto">
+            <div className="flex items-center">
+              <button
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className={`${
+                  isSidebarOpen ? "invisible" : ""
+                } text-brand-darker hover:text-brand-dark focus:outline-none`}
+                aria-label="Toggle sidebar"
+              >
+                <div className="p-2 transition-colors hover:bg-brand-light rounded-md duration-150">
+                  <PanelLeftOpen size={28} />
+                </div>
+              </button>
+              <Link
+                to="/"
+                className={`${
+                  isSidebarOpen ? "invisible" : ""
+                } text-brand-darker hover:text-brand-dark focus:outline-none hidden md:block`}
+                aria-label="Toggle sidebar"
+              >
+                <div className="p-2 transition-colors hover:bg-brand-light rounded-md duration-150">
+                  <MessageSquarePlus size={28} />
+                </div>
+              </Link>
             </div>
-          </button>
-          <Link
-            to="/"
-            className={`${
-              isSidebarOpen ? "invisible" : ""
-            } text-brand-darker hover:text-brand-dark focus:outline-none hidden md:block`}
-            aria-label="Toggle sidebar"
-          >
-            <div className="p-2 transition-colors hover:bg-brand-light rounded-md duration-150">
-              <MessageSquarePlus size={28} />
+            <span
+              className={`text-xl font-semibold text-brand-darker ${
+                isSidebarOpen ? "absolute ml-auto" : "ml-2"
+              }`}
+            >
+              OpenRouter Chat
+            </span>
+            <Link
+              to="/"
+              className={`text-brand-darker hover:text-brand-dark focus:outline-none block sm:hidden`}
+              aria-label="Toggle sidebar"
+            >
+              <div className="p-2 transition-colors hover:bg-brand-light rounded-md duration-150">
+                <MessageSquarePlus size={28} />
+              </div>
+            </Link>
+          </div>
+          <div className="flex-1 flex justify-end w-full sm:w-auto">
+            <div className="model-selector flex flex-col sm:flex-row items-center gap-1 sm:gap-2 w-full sm:w-auto">
+              <label
+                htmlFor="model-select"
+                className="text-xs text-brand-dark font-medium sm:mb-0 mb-1"
+              >
+                Model
+              </label>
+              <select
+                id="model-select"
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                className="p-2 rounded-md border border-brand-accent bg-white text-brand-darker text-xs focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none min-w-[120px] max-w-[180px] shadow-sm hover:border-brand-dark transition"
+              >
+                {MODEL_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
             </div>
-          </Link>
-          <div className="text-xl font-semibold text-brand-darker ml-auto">
-            OpenRouter Chat
           </div>
         </header>
         {/* Area konten utama yang dirender berdasarkan rute */}
