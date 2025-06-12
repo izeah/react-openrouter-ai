@@ -104,18 +104,24 @@ const AppLayout: React.FC = () => {
       setCurrentRouteChatId(pathParts[2]);
   }, [location.pathname]);
 
+  // Prioritas ESC: modal API Key > sidebar
   useEffect(() => {
-    if (!isApiKeyModalOpen) return;
-
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setIsApiKeyModalOpen(false);
+        if (isApiKeyModalOpen) {
+          setIsApiKeyModalOpen(false);
+        } else if (
+          isSidebarOpen &&
+          typeof window !== "undefined" &&
+          window.innerWidth < 768
+        ) {
+          setIsSidebarOpen(false);
+        }
       }
     };
-
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, [isApiKeyModalOpen]);
+  }, [isApiKeyModalOpen, isSidebarOpen]);
 
   return (
     <div className="flex h-screen bg-brand-light font-sans">
