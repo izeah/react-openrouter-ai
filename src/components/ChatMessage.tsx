@@ -125,6 +125,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                         </code>
                       );
                     },
+                    pre: ({ children }) => <>{children}</>,
                   }}
                 >
                   {message.content}
